@@ -1,0 +1,21 @@
+var ss = SpreadsheetApp.getActiveSpreadsheet();
+var sheet = ss.getSheetByName("Log");
+var dataSheet = ss.getSheetByName("Data");
+
+function myFunction() {
+  var ethPrice = dataSheet.getRange("F2").getValue();
+  var newBlocks = dataSheet.getRange("A2:D10").getValues();
+  
+  //Update the sheet
+  for(var i = newBlocks.length - 1; i >= 0; i--){ 
+    //If the block height of the new block is greater than the last logged block height
+    if(sheet.getRange("B2").getValue() < newBlocks[i][1]){
+      sheet.insertRows(2);
+      sheet.getRange(2, 1, 1, 4).setValues([newBlocks[i]]);
+      
+      //Add the price of mined coin at the time
+      var ethMined = Number(newBlocks[i][2].replace(" Eth", ''));
+      sheet.getRange("E2").setValue(Math.ceil(ethMined * ethPrice * 100) / 100);
+    }
+  }
+}
